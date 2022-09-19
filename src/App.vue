@@ -1,6 +1,6 @@
 <template>
-  <HelloWorld />
   <MindMap></MindMap>
+  <HelloWorld />
 </template>
 
 <script>

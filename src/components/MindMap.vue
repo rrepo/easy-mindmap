@@ -56,36 +56,56 @@ export default {
         'text': 'ch1',
         'url': '',
         'parent': 0,
+        'direction':''
       },
       {
         "id": 2,
         'text': 'ch2',
         'url': '',
         'parent': 0,
+        'direction':''
       },
       {
         "id": 3,
         'text': 'ch3',
         'url': '',
-        'parent': 0,
+        'parent': 1,
+        'direction':''
       },
       {
         "id": 4,
         'text': 'ch4',
         'url': '',
         'parent': 1,
+        'direction':''
       },
       {
         "id": 5,
         'text': 'ch5',
         'url': '',
-        'parent': 1,
+        'parent': 2,
+        'direction':''
       },
       {
         "id": 6,
         'text': 'ch6',
         'url': '',
-        'parent': 1,
+        'parent': 2,
+        'direction':''
+      },
+      {
+        "id": 7,
+        'text': 'ch7',
+        'url': '',
+        'parent': 0,
+        'direction':''
+      },
+      {
+        "id": 8,
+        'text': 'ch8',
+        'url': '',
+        'parent': 0,
+        'direction':''
       },
     ]);
     let lines = ref([
@@ -110,15 +130,19 @@ export default {
     const makeFromChild = (el, node_text, rap_node, node_childes, text) => {
       // console.log("child", el)
       const parent = document.getElementById(`${el["parent"]}`)
+
+      console.log(parent)
+
       node_text.classList.add("c_nodes");
       rap_node.classList.add("rap_node");
-      node_childes.classList.add("node_childes");
       node_childes.id = `${el["id"]}`
       node_text.id = `${"node" + el["id"]}`
+      node_childes.classList.add("node_childes");
       node_text.appendChild(text)
       rap_node.appendChild(node_childes)
       rap_node.appendChild(node_text)
       parent.appendChild(rap_node)
+      return node_childes
     }
 
     const makelines = () => {
@@ -158,23 +182,29 @@ export default {
 
     const input_title = (e) => {
       // console.log(e.srcElement.innerText)
-      console.log(e.target.offsetWidth)
       title.value = e.srcElement.innerText
       console.log(title)
       line_reset()
     }
 
     const keydown_node = (e) => {
-      console.log(e)
+      // console.log(e)
+      e
       // console.log(e.srcElement.innerText)
-      // console.log(e.target.offsetWidth)
+      // console.log('before',e.target.offsetWidth)
       // 横幅を動的に変更する
       line_reset()
     }
 
     const keyup_node = (e) => {
+      // console.log('after',e.target.offsetWidth)
       let id = Number(e.srcElement.id.replace("node", ""))
-      nodes.value[id].text = e.srcElement.innerText
+      // console.log(e.srcElement.innerText)
+      // console.log(nodes.value[id - 1].text)
+      nodes.value[id - 1].text = e.srcElement.innerText
+
+      console.log()
+
       line_reset()
     }
 
@@ -193,33 +223,77 @@ export default {
         const text = document.createTextNode(el["text"]);
         node_text.contentEditable = true;
 
-        if (count % 2 == 0) {
-          if (el["parent"] == 0) {
+        if (el["parent"] == 0) {
+          console.log()
+          if (count % 2 == 0) {
             let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
 
             nodeFromParent[0].appendChild(nodeFromParent[1])
             nodeFromParent[0].appendChild(nodeFromParent[2])
 
             right.appendChild(nodeFromParent[0])
+            console.log('el',el.direction)
+            el.direction = 'right'
           } else {
-            makeFromChild(el, node_text, rap_node, node_childes, text)
-          }
-        } else {
-          if (el["parent"] == 0) {
             let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
 
             nodeFromParent[0].appendChild(nodeFromParent[2])
             nodeFromParent[0].appendChild(nodeFromParent[1])
 
             left.appendChild(nodeFromParent[0])
-          } else {
-            makeFromChild(el, node_text, rap_node, node_childes, text)
+            node_childes.classList.add("margin-auto")
+            el.direction = 'left'
+          }
+        } else {
+          let child_node = makeFromChild(el, node_text, rap_node, node_childes, text)
+  
+          console.log("child_node!!!!!!!!!!", el)
+
+          console.log(nodes.value[el.parent - 1].direction)
+          el.direction = nodes.value[el.parent - 1].direction
+          if(el.direction == 'right'){
+            child_node.classList.add("right_node_childes")
+          }else{
+            child_node.classList.add("left_node_childes")
           }
         }
 
-        document.getElementById(`${'node'+el['id']}`).addEventListener('keydown', keydown_node);
-        document.getElementById(`${'node'+el['id']}`).addEventListener('keyup', keyup_node);
+        // console.log(nodes.value)
 
+        // if (count % 2 == 0) {
+        //   if (el["parent"] == 0) {
+        //     let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
+
+        //     nodeFromParent[0].appendChild(nodeFromParent[1])
+        //     nodeFromParent[0].appendChild(nodeFromParent[2])
+
+        //     right.appendChild(nodeFromParent[0])
+        //   } else {
+        //     let child_node = makeFromChild(el, node_text, rap_node, node_childes, text)
+        //     child_node.classList.add("node_childes")
+        //     console.log("child_node!!!!!!!!!!", child_node)
+        //   }
+        // } else {
+        //   if (el["parent"] == 0) {
+        //     let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
+
+        //     nodeFromParent[0].appendChild(nodeFromParent[2])
+        //     nodeFromParent[0].appendChild(nodeFromParent[1])
+
+        //     left.appendChild(nodeFromParent[0])
+        //     console.log(el)
+        //     node_childes.classList.add("margin-auto")
+        //   } else {
+        //     let child_node = makeFromChild(el, node_text, rap_node, node_childes, text)
+        //     console.log("child_node", child_node)
+        //     child_node.classList.add("node_childes")
+        //     // child_node.classList.add("node_childes")
+        //     // child_node.classList.add("margin-auto")
+        //   }
+        // }
+
+        document.getElementById(`${'node' + el['id']}`).addEventListener('keydown', keydown_node);
+        document.getElementById(`${'node' + el['id']}`).addEventListener('keyup', keyup_node);
       });
 
       makelines()
@@ -247,15 +321,15 @@ export default {
 }
 
 .edge {
-  width: 800px;
-  height: 800px;
+  width: 900px;
+  height: 900px;
   overflow: hidden;
   border: 1px solid #000;
 }
 
 .field {
-  width: 1000px;
-  height: 1000px;
+  width: 1500px;
+  height: 1500px;
   z-index: 1000000;
   display: flex;
   position: relative;
@@ -298,7 +372,7 @@ export default {
 .left_vertical {
   width: 100%;
   margin: 0 auto;
-  text-align: right;
+  text-align: left;
   display: flex;
   justify-content: flex-end;
   /* background-color: olive; */
@@ -315,6 +389,7 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
+  margin: auto;
 }
 
 .title_nodes {
@@ -339,8 +414,12 @@ export default {
   background-color: #F5F5F5;
   border-radius: 10px;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .5);
+  /* width: fit-content;
+  height: fit-content; */
+  width: -moz-fit-content;
+  /* Firefox */
   width: fit-content;
-  height: fit-content;
+  /* other browsers */
   font-size: 23px;
   padding: 10px 10px;
   font-family: sans-serif;
@@ -351,18 +430,38 @@ export default {
   background-color: #F5F5F5;
   border-radius: 10px;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .5);
+  /* width: fit-content;
+  height: fit-content; */
+  width: -moz-fit-content;
+  /* Firefox */
   width: fit-content;
-  height: fit-content;
+  /* other browsers */
   font-size: 23px;
   padding: 10px 10px;
   font-family: sans-serif;
   margin: 60px 60px;
 }
 
-.node_childes {
+.right_node_childes {
   width: 100%;
   height: 100%;
   /* background-color: brown; */
+  width: -moz-fit-content;
+  /* Firefox */
+  width: fit-content;
+  /* other browsers */
+}
+
+.left_node_childes {
+  width: 100%;
+  height: 100%;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin-right: auto;
+}
+
+.margin-auto {
+  margin: auto;
 }
 
 #line {

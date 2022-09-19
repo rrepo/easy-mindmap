@@ -22,7 +22,7 @@ export default {
       count: 2,
     });
     const test = () => {
-      console.log("test")
+      // console.log("test")
       obj.count = 5
       countRef.value = 4
     };
@@ -34,9 +34,9 @@ export default {
       // );
 
 
-      console.log("mounted")
-      console.log(countRef)
-      console.log(obj)
+      // console.log("mounted")
+      // console.log(countRef)
+      // console.log(obj)
       test()
     });
     return {
