@@ -494,6 +494,12 @@ export default {
   justify-content: flex-end;
 }
 
+.margin-left {
+  /* margin: auto; */
+  margin-left: auto;
+  margin-right: 0;
+}
+
 .node_childes {
   /* width: 100%;
   height: 100%; */
@@ -519,9 +525,5 @@ export default {
   background-color: forestgreen;
 }
 
-.margin-left {
-  /* margin: auto; */
-  margin-left: auto;
-  margin-right: 0;
-}
+
 </style>
