@@ -114,6 +114,8 @@ export default {
     let count = 0
     const LeaderLine = window.LeaderLine;
 
+    // 9/27 fix input and move node
+
     const makeFromParent = (d, el, node_text, rap_node, node_childes, text) => {
       node_text.classList.add("p_nodes");
       rap_node.classList.add("rap_node");
