@@ -13,10 +13,11 @@
 
         <div class="center">
           <div class="title_node_rap">
-            <div class="title_nodes" id="0" contenteditable="true" @:keydown="input_title($event)">
+            <div class="title_nodes" id="title" contenteditable="true">
               <!-- @:keydown.tab="push_tab($el)" -->
               {{ title }}
             </div>
+
           </div>
 
         </div>
@@ -52,60 +53,130 @@ export default {
     let title = ref("title")
     let nodes = ref([
       {
+        "id": 0,
+        'text': 'ch0',
+        'url': '',
+        'parent': 'title',
+        'direction': ''
+      },
+      {
         "id": 1,
         'text': 'ch1',
         'url': '',
-        'parent': 0,
-        'direction':''
+        'parent': 'title',
+        'direction': ''
       },
       {
         "id": 2,
         'text': 'ch2',
         'url': '',
         'parent': 0,
-        'direction':''
+        'direction': ''
       },
       {
         "id": 3,
         'text': 'ch3',
         'url': '',
-        'parent': 1,
-        'direction':''
+        'parent': 0,
+        'direction': ''
       },
       {
         "id": 4,
         'text': 'ch4',
         'url': '',
         'parent': 1,
-        'direction':''
+        'direction': ''
       },
       {
         "id": 5,
         'text': 'ch5',
         'url': '',
-        'parent': 2,
-        'direction':''
+        'parent': 1,
+        'direction': ''
       },
       {
         "id": 6,
         'text': 'ch6',
         'url': '',
-        'parent': 2,
-        'direction':''
+        'parent': 'title',
+        'direction': ''
       },
       {
         "id": 7,
         'text': 'ch7',
         'url': '',
-        'parent': 0,
-        'direction':''
+        'parent': 'title',
+        'direction': ''
       },
       {
         "id": 8,
         'text': 'ch8',
         'url': '',
-        'parent': 0,
-        'direction':''
+        'parent': '2',
+        'direction': ''
+      },
+      {
+        "id": 9,
+        'text': 'ch9',
+        'url': '',
+        'parent': '2',
+        'direction': ''
+      },
+      {
+        "id": 10,
+        'text': 'ch10',
+        'url': '',
+        'parent': '4',
+        'direction': ''
+      },
+      {
+        "id": 11,
+        'text': 'ch11',
+        'url': '',
+        'parent': '4',
+        'direction': ''
+      },
+      {
+        "id": 12,
+        'text': 'ch12',
+        'url': '',
+        'parent': '5',
+        'direction': ''
+      },
+      {
+        "id": 13,
+        'text': 'ch13',
+        'url': '',
+        'parent': 'title',
+        'direction': ''
+      },
+      {
+        "id": 14,
+        'text': 'ch14',
+        'url': '',
+        'parent': '7',
+        'direction': ''
+      },
+      {
+        "id": 15,
+        'text': 'ch15',
+        'url': '',
+        'parent': '6',
+        'direction': ''
+      },
+      {
+        "id": 16,
+        'text': 'ch16',
+        'url': '',
+        'parent': '7',
+        'direction': ''
+      },
+      {
+        "id": 17,
+        'text': 'ch17',
+        'url': '',
+        'parent': '14',
+        'direction': ''
       },
     ]);
     let lines = ref([
@@ -114,12 +185,11 @@ export default {
     let count = 0
     const LeaderLine = window.LeaderLine;
 
-    // 9/27 fix input and move node
+    // fix input move
 
-    const makeFromParent = (d, el, node_text, rap_node, node_childes, text) => {
+    const makeFromParent = (el, node_text, rap_node, node_childes, text) => {
       node_text.classList.add("p_nodes");
       rap_node.classList.add("rap_node");
-      node_childes.classList.add("node_childes");
       node_childes.id = `${el["id"]}`
       node_text.id = `${"node" + el["id"]}`
       node_text.appendChild(text)
@@ -130,42 +200,59 @@ export default {
     }
 
     const makeFromChild = (el, node_text, rap_node, node_childes, text) => {
-      // console.log("child", el)
       const parent = document.getElementById(`${el["parent"]}`)
-
-      console.log(parent)
-
       node_text.classList.add("c_nodes");
-      rap_node.classList.add("rap_node");
       node_childes.id = `${el["id"]}`
       node_text.id = `${"node" + el["id"]}`
-      node_childes.classList.add("node_childes");
       node_text.appendChild(text)
       rap_node.appendChild(node_childes)
       rap_node.appendChild(node_text)
       parent.appendChild(rap_node)
-      return node_childes
+
+      el.direction = nodes.value[el.parent].direction
+      if (el.direction == 'right') {
+        rap_node.appendChild(node_text)
+        rap_node.appendChild(node_childes)
+        parent.appendChild(rap_node)
+        rap_node.classList.add("rap_node");
+      } else {
+        rap_node.appendChild(node_childes)
+        rap_node.appendChild(node_text)
+        parent.appendChild(rap_node)
+        rap_node.classList.add("rap_node_left");
+      }
+    }
+
+    const makeline = (el, direction, parent) => {
+      console.log(direction)
+      let line = new LeaderLine(
+        document.getElementById(parent),
+        LeaderLine.pointAnchor(document.getElementById(`${"node" + el["id"]}`), { x: `${50 + "%"}`, y: '50%' })
+      );
+      // straight
+      line.path = "magnet"
+      line.endPlug = "behind"
+      lines.value.push(line)
     }
 
     const makelines = () => {
+      const right = 1
+      const left = 99
+
       nodes.value.forEach(el => {
-        if (el.parent == 0) {
-          let line = new LeaderLine(
-            document.getElementById('0'),
-            LeaderLine.pointAnchor(document.getElementById(`${"node" + el["id"]}`), { x: '20%', y: '50%' })
-          );
-          // line.setOptions({startSocket: 'auto', endSocket: 'auto'});
-          line.path = "magnet"
-          line.endPlug = "behind"
-          lines.value.push(line)
+        if (el.parent == 'title') {
+          if (el.direction == "right") {
+            makeline(el, right, 'title')
+          } else {
+            makeline(el, left, 'title')
+          }
         } else {
-          let line = new LeaderLine(
-            document.getElementById(`${"node" + el["parent"]}`),
-            LeaderLine.pointAnchor(document.getElementById(`${"node" + el["id"]}`), { x: '20%', y: '50%' })
-          );
-          line.path = "magnet"
-          line.endPlug = "behind"
-          lines.value.push(line)
+          if (el.direction == "right") {
+            makeline(el, right, `${"node" + el["parent"]}`)
+          } else {
+            makeline(el, left, `${"node" + el["parent"]}`)
+          }
+
         }
       })
     }
@@ -182,38 +269,10 @@ export default {
       makelines()
     }
 
-    const input_title = (e) => {
-      // console.log(e.srcElement.innerText)
-      title.value = e.srcElement.innerText
-      console.log(title)
-      line_reset()
-    }
-
-    const keydown_node = (e) => {
-      // console.log(e)
-      e
-      // console.log(e.srcElement.innerText)
-      // console.log('before',e.target.offsetWidth)
-      // 横幅を動的に変更する
-      line_reset()
-    }
-
-    const keyup_node = (e) => {
-      // console.log('after',e.target.offsetWidth)
-      let id = Number(e.srcElement.id.replace("node", ""))
-      // console.log(e.srcElement.innerText)
-      // console.log(nodes.value[id - 1].text)
-      nodes.value[id - 1].text = e.srcElement.innerText
-
-      console.log()
-
-      line_reset()
-    }
-
     onMounted(() => {
       console.log("mounted")
 
-      document.getElementById('0').scrollIntoView({ block: 'center', inline: 'center', })
+      document.getElementById('title').scrollIntoView({ block: 'center', inline: 'center', })
 
       const right = document.getElementById("right_center");
       const left = document.getElementById("left_center");
@@ -225,78 +284,32 @@ export default {
         const text = document.createTextNode(el["text"]);
         node_text.contentEditable = true;
 
-        if (el["parent"] == 0) {
+        if (el["parent"] == 'title') {
           console.log()
           if (count % 2 == 0) {
-            let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
+            let nodeFromParent = makeFromParent(el, node_text, rap_node, node_childes, text)
 
             nodeFromParent[0].appendChild(nodeFromParent[1])
             nodeFromParent[0].appendChild(nodeFromParent[2])
 
             right.appendChild(nodeFromParent[0])
-            console.log('el',el.direction)
             el.direction = 'right'
           } else {
-            let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
+            let nodeFromParent = makeFromParent(el, node_text, rap_node, node_childes, text)
 
             nodeFromParent[0].appendChild(nodeFromParent[2])
             nodeFromParent[0].appendChild(nodeFromParent[1])
 
             left.appendChild(nodeFromParent[0])
-            node_childes.classList.add("margin-auto")
+            node_childes.classList.add("margin-left")
             el.direction = 'left'
           }
         } else {
-          let child_node = makeFromChild(el, node_text, rap_node, node_childes, text)
-  
-          console.log("child_node!!!!!!!!!!", el)
-
-          console.log(nodes.value[el.parent - 1].direction)
-          el.direction = nodes.value[el.parent - 1].direction
-          if(el.direction == 'right'){
-            child_node.classList.add("right_node_childes")
-          }else{
-            child_node.classList.add("left_node_childes")
-          }
+          makeFromChild(el, node_text, rap_node, node_childes, text)
         }
-
-        // console.log(nodes.value)
-
-        // if (count % 2 == 0) {
-        //   if (el["parent"] == 0) {
-        //     let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
-
-        //     nodeFromParent[0].appendChild(nodeFromParent[1])
-        //     nodeFromParent[0].appendChild(nodeFromParent[2])
-
-        //     right.appendChild(nodeFromParent[0])
-        //   } else {
-        //     let child_node = makeFromChild(el, node_text, rap_node, node_childes, text)
-        //     child_node.classList.add("node_childes")
-        //     console.log("child_node!!!!!!!!!!", child_node)
-        //   }
-        // } else {
-        //   if (el["parent"] == 0) {
-        //     let nodeFromParent = makeFromParent(right, el, node_text, rap_node, node_childes, text)
-
-        //     nodeFromParent[0].appendChild(nodeFromParent[2])
-        //     nodeFromParent[0].appendChild(nodeFromParent[1])
-
-        //     left.appendChild(nodeFromParent[0])
-        //     console.log(el)
-        //     node_childes.classList.add("margin-auto")
-        //   } else {
-        //     let child_node = makeFromChild(el, node_text, rap_node, node_childes, text)
-        //     console.log("child_node", child_node)
-        //     child_node.classList.add("node_childes")
-        //     // child_node.classList.add("node_childes")
-        //     // child_node.classList.add("margin-auto")
-        //   }
-        // }
-
-        document.getElementById(`${'node' + el['id']}`).addEventListener('keydown', keydown_node);
-        document.getElementById(`${'node' + el['id']}`).addEventListener('keyup', keyup_node);
       });
+
+      console.log(nodes.value)
 
       makelines()
     });
@@ -306,9 +319,6 @@ export default {
       nodes,
       lines,
       line_reset,
-      input_title,
-      keydown_node,
-      keyup_node
     };
 
   },
@@ -330,22 +340,22 @@ export default {
 }
 
 .field {
-  width: 1500px;
-  height: 1500px;
-  z-index: 1000000;
+  width: 5000px;
+  height: 5000px;
+  /* z-index: 1; */
   display: flex;
   position: relative;
 }
 
 .center {
-  width: 30%;
+  width: 10%;
   height: 100%;
-  z-index: 1000000000000;
+  /* z-index: 1; */
   /* background-color: coral; */
 }
 
 .right {
-  width: 35%;
+  width: 45%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -365,7 +375,7 @@ export default {
 }
 
 .left {
-  width: 35%;
+  width: 45%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -391,8 +401,26 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
-  margin: auto;
+  z-index: 2;
 }
+
+.title_selector {
+  width: fit-content;
+  height: fit-content;
+  border-radius: 10px;
+  /* width: 100px;
+  height: 100px; */
+  /* border: 4px solid; */
+
+  /* background-color: antiquewhite; */
+  position: relative;
+}
+
+.selector_focus {
+  border: 4px solid #00aaff;
+  border-radius: 10px;
+}
+
 
 .title_nodes {
   border-radius: 10px;
@@ -403,13 +431,14 @@ export default {
   padding: 10px 10px;
   background-color: #F5F5F5;
   max-width: 200px;
+
+  /* pointer-events: none; */
+  position: relative;
+  z-index: -10
 }
 
-.rap_node {
-  display: flex;
-  margin: 60px 0px;
-  align-items: center;
-  /* background-color: rebeccapurple; */
+.title_nodes:focus {
+  outline: none;
 }
 
 .p_nodes {
@@ -426,6 +455,8 @@ export default {
   padding: 10px 10px;
   font-family: sans-serif;
   margin: auto 0;
+
+  z-index: 1;
 }
 
 .c_nodes {
@@ -435,19 +466,44 @@ export default {
   /* width: fit-content;
   height: fit-content; */
   width: -moz-fit-content;
-  /* Firefox */
   width: fit-content;
-  /* other browsers */
   font-size: 23px;
   padding: 10px 10px;
   font-family: sans-serif;
-  margin: 60px 60px;
+  margin: 30px 30px;
+
+  z-index: 1;
+}
+
+.rap_node {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  /* height: 100%; */
+  /* padding: 10px 0px; */
+  /* margin-left: auto;
+  margin-right: 0; */
+}
+
+.rap_node_left {
+  display: flex;
+  align-items: center;
+  padding: 10px 0px;
+  width: 100%;
+
+  justify-content: flex-end;
+}
+
+.node_childes {
+  /* width: 100%;
+  height: 100%; */
+  /* background-color: brown; */
 }
 
 .right_node_childes {
   width: 100%;
   height: 100%;
-  /* background-color: brown; */
+  background-color: brown;
   width: -moz-fit-content;
   /* Firefox */
   width: fit-content;
@@ -460,21 +516,12 @@ export default {
   width: -moz-fit-content;
   width: fit-content;
   margin-right: auto;
+  background-color: forestgreen;
 }
 
-.margin-auto {
-  margin: auto;
-}
-
-#line {
-  position: absolute;
-  left: 100px;
-  top: 100px;
-  width: 200px;
-  height: 1px;
-  background-color: red;
-  transform-origin: left top;
-  transform: skewY(45deg);
+.margin-left {
+  /* margin: auto; */
+  margin-left: auto;
+  margin-right: 0;
 }
 </style>
-  
