@@ -44,187 +44,59 @@ import { dragscroll } from 'vue-dragscroll'
 
 export default {
   name: 'MindMap',
-  props: {
-  },
+  props: ['title_props', 'node_props'],
   directives: {
     dragscroll
   },
-  setup() {
-    let title = ref("title")
-    let nodes = ref([
-      {
-        "id": 0,
-        'text': 'ch0',
-        'url': '',
-        'parent': 'title',
-        'direction': ''
-      },
-      {
-        "id": 1,
-        'text': 'ch1',
-        'url': '',
-        'parent': 'title',
-        'direction': ''
-      },
-      {
-        "id": 2,
-        'text': 'ch2',
-        'url': '',
-        'parent': 0,
-        'direction': ''
-      },
-      {
-        "id": 3,
-        'text': 'ch3',
-        'url': '',
-        'parent': 0,
-        'direction': ''
-      },
-      {
-        "id": 4,
-        'text': 'ch4',
-        'url': '',
-        'parent': 1,
-        'direction': ''
-      },
-      {
-        "id": 5,
-        'text': 'ch5',
-        'url': '',
-        'parent': 1,
-        'direction': ''
-      },
-      {
-        "id": 6,
-        'text': 'ch6',
-        'url': '',
-        'parent': 'title',
-        'direction': ''
-      },
-      {
-        "id": 7,
-        'text': 'ch7',
-        'url': '',
-        'parent': 'title',
-        'direction': ''
-      },
-      {
-        "id": 8,
-        'text': 'ch8',
-        'url': '',
-        'parent': '2',
-        'direction': ''
-      },
-      {
-        "id": 9,
-        'text': 'ch9',
-        'url': '',
-        'parent': '2',
-        'direction': ''
-      },
-      {
-        "id": 10,
-        'text': 'ch10',
-        'url': '',
-        'parent': '4',
-        'direction': ''
-      },
-      {
-        "id": 11,
-        'text': 'ch11',
-        'url': '',
-        'parent': '4',
-        'direction': ''
-      },
-      {
-        "id": 12,
-        'text': 'ch12',
-        'url': '',
-        'parent': '5',
-        'direction': ''
-      },
-      {
-        "id": 13,
-        'text': 'ch13',
-        'url': '',
-        'parent': 'title',
-        'direction': ''
-      },
-      {
-        "id": 14,
-        'text': 'ch14',
-        'url': '',
-        'parent': '7',
-        'direction': ''
-      },
-      {
-        "id": 15,
-        'text': 'ch15',
-        'url': '',
-        'parent': '6',
-        'direction': ''
-      },
-      {
-        "id": 16,
-        'text': 'ch16',
-        'url': '',
-        'parent': '7',
-        'direction': ''
-      },
-      {
-        "id": 17,
-        'text': 'ch17',
-        'url': '',
-        'parent': '14',
-        'direction': ''
-      },
-    ]);
+  setup(props) {
+    console.log(props.title_props)
+    console.log(props.node_props)
+    console.log(typeof (props.node_props))
+
+    let title = ref(props.title_props)
+    let nodes = ref(props.node_props)
     let lines = ref([
 
     ])
     let count = 0
     const LeaderLine = window.LeaderLine;
 
-    // fix input move
-
-    const makeFromParent = (el, node_text, rap_node, node_childes, text) => {
-      node_text.classList.add("p_nodes");
-      rap_node.classList.add("rap_node");
-      node_childes.id = `${el["id"]}`
-      node_text.id = `${"node" + el["id"]}`
-      node_text.appendChild(text)
-
-      count++
-
-      return [rap_node, node_text, node_childes]
+    const right_append = (rap_node, node_text, node_childes) => {
+      rap_node.appendChild(node_text)
+      rap_node.appendChild(node_childes)
     }
 
-    const makeFromChild = (el, node_text, rap_node, node_childes, text) => {
-      const parent = document.getElementById(`${el["parent"]}`)
-      node_text.classList.add("c_nodes");
-      node_childes.id = `${el["id"]}`
-      node_text.id = `${"node" + el["id"]}`
-      node_text.appendChild(text)
+    const left_append = (rap_node, node_text, node_childes) => {
       rap_node.appendChild(node_childes)
       rap_node.appendChild(node_text)
-      parent.appendChild(rap_node)
+    }
+
+    const makeFromParent = (node_text, rap_node, node_childes) => {
+      node_text.classList.add("p_nodes");
+      rap_node.classList.add("rap_node");
+
+      count++
+      return { rap_node, node_text, node_childes }
+    }
+
+    const makeFromChild = (el, node_text, rap_node, node_childes) => {
+      const parent = document.getElementById(`${el["parent"]}`)
+      node_text.classList.add("c_nodes");
 
       el.direction = nodes.value[el.parent].direction
       if (el.direction == 'right') {
-        rap_node.appendChild(node_text)
-        rap_node.appendChild(node_childes)
-        parent.appendChild(rap_node)
+        right_append(rap_node, node_text, node_childes)
         rap_node.classList.add("rap_node");
       } else {
-        rap_node.appendChild(node_childes)
-        rap_node.appendChild(node_text)
-        parent.appendChild(rap_node)
+        left_append(rap_node, node_text, node_childes)
         rap_node.classList.add("rap_node_left");
       }
+      parent.appendChild(rap_node)
+      return { rap_node, node_text, node_childes }
     }
 
     const makeline = (el, direction, parent) => {
-      console.log(direction)
+      direction
       let line = new LeaderLine(
         document.getElementById(parent),
         LeaderLine.pointAnchor(document.getElementById(`${"node" + el["id"]}`), { x: `${50 + "%"}`, y: '50%' })
@@ -269,6 +141,8 @@ export default {
       makelines()
     }
 
+
+
     onMounted(() => {
       console.log("mounted")
 
@@ -284,29 +158,32 @@ export default {
         const text = document.createTextNode(el["text"]);
         node_text.contentEditable = true;
 
+        node_childes.id = `${el["id"]}`
+        node_text.id = `${"node" + el["id"]}`
+        node_text.appendChild(text)
+
         if (el["parent"] == 'title') {
           console.log()
           if (count % 2 == 0) {
-            let nodeFromParent = makeFromParent(el, node_text, rap_node, node_childes, text)
-
-            nodeFromParent[0].appendChild(nodeFromParent[1])
-            nodeFromParent[0].appendChild(nodeFromParent[2])
-
-            right.appendChild(nodeFromParent[0])
+            let nodeFromParent = makeFromParent(node_text, rap_node, node_childes)
+            right_append(nodeFromParent.rap_node, nodeFromParent.node_text, nodeFromParent.node_childes)
+            right.appendChild(nodeFromParent.rap_node)
             el.direction = 'right'
           } else {
-            let nodeFromParent = makeFromParent(el, node_text, rap_node, node_childes, text)
-
-            nodeFromParent[0].appendChild(nodeFromParent[2])
-            nodeFromParent[0].appendChild(nodeFromParent[1])
-
-            left.appendChild(nodeFromParent[0])
+            let nodeFromParent = makeFromParent(node_text, rap_node, node_childes)
+            left_append(nodeFromParent.rap_node, nodeFromParent.node_text, nodeFromParent.node_childes)
+            left.appendChild(nodeFromParent.rap_node)
             node_childes.classList.add("margin-left")
             el.direction = 'left'
           }
         } else {
           makeFromChild(el, node_text, rap_node, node_childes, text)
         }
+
+        document.getElementById('node' + el.id).addEventListener('blur', () => {
+          line_reset()
+        });
+
       });
 
       console.log(nodes.value)
@@ -333,10 +210,10 @@ export default {
 }
 
 .edge {
-  width: 900px;
-  height: 900px;
+  width: 100vh;
+  height: 100vh;
   overflow: hidden;
-  border: 1px solid #000;
+  /* border: 1px solid #000; */
 }
 
 .field {
@@ -499,31 +376,4 @@ export default {
   margin-left: auto;
   margin-right: 0;
 }
-
-.node_childes {
-  /* width: 100%;
-  height: 100%; */
-  /* background-color: brown; */
-}
-
-.right_node_childes {
-  width: 100%;
-  height: 100%;
-  background-color: brown;
-  width: -moz-fit-content;
-  /* Firefox */
-  width: fit-content;
-  /* other browsers */
-}
-
-.left_node_childes {
-  width: 100%;
-  height: 100%;
-  width: -moz-fit-content;
-  width: fit-content;
-  margin-right: auto;
-  background-color: forestgreen;
-}
-
-
 </style>

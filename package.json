@@ -1,7 +1,17 @@
 {
-  "name": "mindmap",
+  "name": "easy-mindmap",
   "version": "0.1.0",
   "private": true,
+  "main": "dist/easy-mindmap.umd.js",
+  "module": "dist/easy-mindmap.esm.js",
+  "unpkg": "dist/easy-mindmap.min.js",
+  "browser": {
+    "./sfc": "src/easy-mindmap.vue"
+  },
+  "license": "MIT",
+  "author": "rrepo",
+  "files": [ "dist" ],
+  "keywords": ["Vue", "Vue.js","vue","mindmap"],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
