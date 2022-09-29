@@ -1,6 +1,7 @@
 <template>
   <div class="">
-    <div class="edge" @scroll="line_reset" v-dragscroll="true">
+    <div class="edge" v-dragscroll="true">
+      <!-- @scroll="line_reset()" -->
       <div class="field" id="field">
         <!-- <button class="btn" @click="click()">center</button> -->
         <div class="left">
@@ -29,6 +30,8 @@
             </div>
           </div>
         </div>
+
+        <div id="line-wrapper"></div>
       </div>
     </div>
   </div>
@@ -38,7 +41,6 @@
 import {
   onMounted,
   ref,
-
 } from "vue"
 import { dragscroll } from 'vue-dragscroll'
 
@@ -60,6 +62,7 @@ export default {
     ])
     let count = 0
     const LeaderLine = window.LeaderLine;
+    // LeaderLine.positionByWindowResize = false
 
     const right_append = (rap_node, node_text, node_childes) => {
       rap_node.appendChild(node_text)
@@ -104,7 +107,22 @@ export default {
       // straight
       line.path = "magnet"
       line.endPlug = "behind"
-      lines.value.push(line)
+
+      const elmWrapper = document.getElementById('line-wrapper');
+      const el_line = document.querySelectorAll('.leader-line')
+
+      function position() {
+        elmWrapper.style.transform = 'none';
+        var rectWrapper = elmWrapper.getBoundingClientRect();
+        // Move to the origin of coordinates as the document
+        elmWrapper.style.transform = 'translate(' +
+          ((rectWrapper.left + pageXOffset) * -1) + 'px, ' +
+          ((rectWrapper.top + pageYOffset) * -1) + 'px)';
+        line.position();
+      }
+      elmWrapper.appendChild(el_line[el_line.length - 1]);
+      position()
+      lines.value.push(el_line[el_line.length - 1])
     }
 
     const makelines = () => {
@@ -131,7 +149,7 @@ export default {
 
     const removelines = () => {
       lines.value.forEach(el => {
-        el.remove()
+        el.parentNode.removeChild(el)
       })
       lines.value.length = 0
     }
@@ -183,11 +201,9 @@ export default {
         document.getElementById('node' + el.id).addEventListener('blur', () => {
           line_reset()
         });
-
       });
 
       console.log(nodes.value)
-
       makelines()
     });
 
