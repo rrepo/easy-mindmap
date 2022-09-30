@@ -97,24 +97,20 @@
       'text': 'ch13',
       'url': '',
       'parent': '5',
-      'direction': ''
-    },]">
+      'direction': ''},]">
 
     </MindMap>
 
   </div>
 
-  <HelloWorld />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import MindMap from './components/MindMap.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
     MindMap
   }
 }

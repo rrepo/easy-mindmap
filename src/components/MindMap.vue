@@ -1,38 +1,36 @@
 <template>
-  <div class="">
-    <div class="edge" v-dragscroll="true">
-      <!-- @scroll="line_reset()" -->
-      <div class="field" id="field">
-        <!-- <button class="btn" @click="click()">center</button> -->
-        <div class="left">
-          <div class="left_vertical">
-            <div class="left_horizontal" id="left_center">
-              <div></div>
-            </div>
+  <div class="edge" v-dragscroll="true">
+    <!-- @scroll="line_reset()" -->
+    <div class="field" id="field">
+      <!-- <button class="btn" @click="click()">center</button> -->
+      <div class="left">
+        <div class="left_vertical">
+          <div class="left_horizontal" id="left_center">
+            <div></div>
           </div>
         </div>
-
-        <div class="center">
-          <div class="title_node_rap">
-            <div class="title_nodes" id="title" contenteditable="true" @blur="line_reset()">
-              <!-- @:keydown.tab="push_tab($el)" -->
-              {{ title }}
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="right">
-          <div class="right_vertical">
-            <div class="right_horizontal" id="right_center">
-              <div></div>
-            </div>
-          </div>
-        </div>
-
-        <div id="line-wrapper"></div>
       </div>
+
+      <div class="center">
+        <div class="title_node_rap">
+          <div class="title_nodes" id="title" contenteditable="true" @blur="line_reset()">
+            <!-- @:keydown.tab="push_tab($el)" -->
+            {{ title }}
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="right">
+        <div class="right_vertical">
+          <div class="right_horizontal" id="right_center">
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="line-wrapper"></div>
     </div>
   </div>
 </template>
