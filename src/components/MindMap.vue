@@ -14,7 +14,7 @@
 
         <div class="center">
           <div class="title_node_rap">
-            <div class="title_nodes" id="title" contenteditable="true">
+            <div class="title_nodes" id="title" contenteditable="true" @blur="line_reset()">
               <!-- @:keydown.tab="push_tab($el)" -->
               {{ title }}
             </div>
