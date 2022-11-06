@@ -1,7 +1,7 @@
 {
   "name": "easy-mindmap",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "main": "dist/easy-mindmap.umd.js",
   "module": "dist/easy-mindmap.esm.js",
   "unpkg": "dist/easy-mindmap.min.js",

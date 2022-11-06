@@ -30,7 +30,7 @@
       'direction': ''
     },
     {
-      'id': 4,
+      'id': 4,  
       'text': 'ch4',
       'url': '',
       'parent': '0',
@@ -97,7 +97,8 @@
       'text': 'ch13',
       'url': '',
       'parent': '5',
-      'direction': ''},]">
+      'direction': ''
+    },]">
 
     </MindMap>
 
