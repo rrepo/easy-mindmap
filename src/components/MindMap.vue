@@ -19,7 +19,7 @@
           <!-- v-on:click.self="click_title_selector($event)" -->
 
           <div class="selector" id="selector" tabindex="0" v-on:click="update_focus($event)"
-            v-on:dblclick="input_node($event)">
+            v-on:dblclick="input_node($event)" v-on:keydown="move_focus($event)">
             <!-- @:keydown="keydown_title($event)" -->
 
             <div class="title_nodes" id="title" contenteditable="true" @blur="line_reset()">
@@ -92,6 +92,9 @@ export default {
     }
 
     const makeFromChild = (el, node_text, rap_node, node_childes, node_selector) => {
+      const margin_rap_node = document.createElement("div");
+      margin_rap_node.classList.add("selector")
+
       const parent = document.getElementById(`${el["parent"]}`)
       node_text.classList.add("c_nodes");
 
@@ -103,7 +106,10 @@ export default {
         left_append(rap_node, node_text, node_childes, node_selector)
         rap_node.classList.add("rap_node_left");
       }
-      parent.appendChild(rap_node)
+
+      margin_rap_node.appendChild(rap_node)
+      margin_rap_node.classList.add("margin_c_nodes");
+      parent.appendChild(margin_rap_node)
       return { rap_node, node_text, node_childes }
     }
 
@@ -223,11 +229,44 @@ export default {
       }
     }
 
+    const move_focus = (e) => {
+      // 多分入力中に移動しなようにするため?
+      if (e.srcElement.id == "selector") {
+
+
+        if (e.keyCode == 39) {
+          
+          console.log('right')
+          console.log(e.srcElement.getBoundingClientRect().top)
+
+          const most_nealy = {}
+
+          nodes.value.forEach(el => {
+            if (el.parent == "title" && el.direction == "right") {
+              const candidate = document.getElementById('selector' + el.id)
+              console.log()
+              most_nealy[el.id] = candidate.getBoundingClientRect().top
+            }
+          })
+
+          console.log('most_nealy',most_nealy)
+          // Object.keys(hash).forEach(key   => console.log('key:' + key + ' value:' + hash[key]));
+
+        }
+
+
+
+      }
+
+
+    }
+
     onMounted(() => {
       console.log("mounted")
 
       const el_title = document.getElementById('title')
       const el_edge = document.getElementById('edge')
+      const el_selector = document.getElementById('selector')
 
       el_title.scrollIntoView({ block: 'center', inline: 'center', })
 
@@ -308,13 +347,11 @@ export default {
       });
 
 
-
-
       console.log(nodes.value)
       makelines()
 
       // 親要素へのイベントの追加
-      document.getElementById('selector').addEventListener('keydown', (e) => {
+      el_selector.addEventListener('keydown', (e) => {
         if ((e.keyCode == 10 || e.keyCode == 13) && e.ctrlKey) {
           console.log('keydown + ctrl')
           input_node(e)
@@ -332,7 +369,7 @@ export default {
         el_edge.addEventListener('scroll', focus_node)
       })
 
-
+      console.log(el_selector)
 
     });
 
@@ -344,6 +381,7 @@ export default {
       input_node,
       update_focus,
       focus_node,
+      move_focus,
     };
 
   },
@@ -439,6 +477,7 @@ export default {
   border-radius: 10px;
   /* background-color:#00aaff; */
   position: relative;
+  margin: 5px;
 }
 
 .selector:focus {
@@ -507,7 +546,7 @@ export default {
   font-family: sans-serif;
 
   padding: 10px 10px;
-  margin: 30px 30px;
+  /* margin: 30px 30px; */
 
   position: relative;
   z-index: -10;
@@ -515,6 +554,10 @@ export default {
 
 .c_nodes:focus {
   outline: none;
+}
+
+.margin_c_nodes {
+  margin: 30px 30px;
 }
 
 .rap_node {
