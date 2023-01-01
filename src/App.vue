@@ -8,7 +8,6 @@
       'parent': 'title',
       'direction': ''  
     },
-    
     {
       'id': 1,
       'text': 'ch1',
