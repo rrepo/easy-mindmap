@@ -239,6 +239,7 @@ export default {
           console.log('right')
           console.log(e.srcElement.getBoundingClientRect().top)
 
+          
           const most_nealy = {}
 
           nodes.value.forEach(el => {
